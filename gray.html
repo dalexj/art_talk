@@ -1,0 +1,82 @@
+<html>
+  <head>
+    <title>Art</title>
+    <script src="jquery-2.1.3.min.js"></script>
+    <script>
+
+var addAmt   = 25;
+var interval = 1;
+
+var x = 0;
+
+$(document).ready(setup);
+
+function setup() {
+  setupGrid();
+  var loc = 528;
+  setInterval(function() {
+    loc = moveRandom(loc);
+    x++;
+
+    loc = (x*x + x*x*x) % 1024;
+    var s = $($('.square')[loc])
+    var newColor = addTo(s.css('background-color'));
+    s.css('background-color', newColor);
+    // s.css('background-color', randomColor());
+  }, interval);
+}
+
+function moveRandom(start) {
+  var r = Math.floor(Math.random() * 4);
+  if(r === 0) { return start < 32        ? moveRandom(start) : start - 32; } // up
+  if(r === 1) { return start >= 992      ? moveRandom(start) : start + 32; } // down
+  if(r === 2) { return start % 32 === 0  ? moveRandom(start) : start - 1;  } // left
+  if(r === 3) { return start % 32 === 31 ? moveRandom(start) : start + 1;  } // right
+}
+
+function setupGrid() {
+  var sqaureSize = '20';
+  for (var i = 0; i < 32*32; i++) {
+    if(i % 32 === 0) $('<br>').appendTo('.grid-container');
+    $('<div />', {
+      'class': 'square',
+      'width': sqaureSize + 'px',
+      'height': sqaureSize + 'px',
+    }).appendTo('.grid-container');
+  }
+}
+
+function addTo(rgb) {
+  var newVals = rgb.replace('rgb(', '').replace(')', '').split(',').map(function(e) { return (parseInt(e) + addAmt) % 256; } );
+  return 'rgb(' + newVals.join(',') + ')';
+}
+
+function randomColor() {
+  return 'rgb(' + randomColorValue() + ',' + randomColorValue() + ',' + randomColorValue() + ')';
+}
+
+function randomColorValue() {
+  return Math.floor(Math.random() * 256);
+}
+    </script>
+    <style type="text/css">
+    .grid-container {
+      text-align: center;
+      margin: 0 auto;
+      line-height: 0;
+    }
+
+    .square {
+      background: rgb(0,0,0);
+      display: inline-block;
+    }
+
+    .clear, .reset {
+      display: block;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="grid-container"></div>
+  </body>
+</html>
